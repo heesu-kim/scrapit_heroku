@@ -8,10 +8,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '-47p8w#&k)(16v+8asydy3rt9%no26-!mcm!bucu1a9bx48)2a'
+#SECRET_KEY = '-47p8w#&k)(16v+8asydy3rt9%no26-!mcm!bucu1a9bx48)2a'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#DEBUG = True
+DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
 ALLOWED_HOSTS = []
 
@@ -56,6 +58,7 @@ LOGIN_REDIRECT_URL = "/folder"
 
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,3 +143,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') # static 폴더를 모아줄 경로
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # media 폴더를 등록
 MEDIA_URL ='/media/' # media 폴더로 갈 경로 url 설정 (model.py에서 업로드)
+
+# Heroku: Update database configuration from $DATABASE_URL.
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
